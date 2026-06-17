@@ -1,0 +1,73 @@
+import javax.swing.*;
+import java.awt.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+
+public class AddMedicine extends JFrame {
+
+    JTextField txtName, txtCategory, txtPrice, txtStock;
+    JButton btnSave;
+
+    public AddMedicine() {
+
+        setTitle("Add Medicine");
+        setSize(400,300);
+        setLayout(new GridLayout(5,2));
+
+        add(new JLabel("Medicine Name"));
+        txtName = new JTextField();
+        add(txtName);
+
+        add(new JLabel("Category"));
+        txtCategory = new JTextField();
+        add(txtCategory);
+
+        add(new JLabel("Price"));
+        txtPrice = new JTextField();
+        add(txtPrice);
+
+        add(new JLabel("Stock"));
+        txtStock = new JTextField();
+        add(txtStock);
+
+        btnSave = new JButton("Save");
+        add(btnSave);
+
+        btnSave.addActionListener(e -> saveMedicine());
+
+        setVisible(true);
+    }
+
+    private void saveMedicine() {
+
+        try {
+
+            Connection con = DBConnection.getConnection();
+
+            String sql =
+            "INSERT INTO medicines(medicine_name,category,price,stock) VALUES(?,?,?,?)";
+
+            PreparedStatement pst =
+            con.prepareStatement(sql);
+
+            pst.setString(1, txtName.getText());
+            pst.setString(2, txtCategory.getText());
+            pst.setDouble(3,
+            Double.parseDouble(txtPrice.getText()));
+            pst.setInt(4,
+            Integer.parseInt(txtStock.getText()));
+
+            pst.executeUpdate();
+
+            JOptionPane.showMessageDialog(this,
+            "Medicine Added Successfully");
+
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(this, ex);
+        }
+    }
+
+    public static void main(String[] args) {
+        new AddMedicine();
+    }
+}
